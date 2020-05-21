@@ -1,3 +1,5 @@
+console.dir(window.document);
+
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
 var pageContentEl = document.querySelector("#page-content");
@@ -36,8 +38,6 @@ var taskFormHandler = function (event) {
 
         // send it as an argument to createTaskEl
         createTaskEl(taskDataObj);
-        console.log(taskDataObj);
-        console.log(taskDataObj.status);
     }
 };
 
@@ -209,7 +209,6 @@ var taskStatusChangeHandler = function (event) {
             tasks[i].status = statusValue;
         }
     }
-    console.log(tasks);
 
     saveTasks()
 };
@@ -218,7 +217,6 @@ var dragTaskHandler = function (event) {
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
     var getId = event.dataTransfer.getData("text/plain");
-    console.log("getId", getId, typeof getId);
 }
 
 var dragLeaveHandler = function (event) {
@@ -253,30 +251,27 @@ var dropTaskHandler = function (event) {
     dropZoneEl.appendChild(draggableElement);
 
     saveTasks()
-    console.log(tasks);
 };
 
 var saveTasks = function () {
     localStorage.setItem("tasks",JSON.stringify(tasks));
 }
 
-var loadTasks = function () {
-    
-    var tasks =  localStorage.getItem("tasks");
-
-    if (!tasks) {
-        tasks = [];
-        return false;
+var loadTasks = function() {
+    var savedTasks = localStorage.getItem("tasks");
+  
+    if (!savedTasks) {
+      return false;
     }
-    tasks = JSON.parse(tasks);
+  
+    savedTasks = JSON.parse(savedTasks);
 
-    for (var i = 0; i < tasks.length; i++) {
-        createTaskEl(tasks[i]);
-    }
-
-}  
-
- loadTasks();
+    // loop through savedTasks array
+for (var i = 0; i < savedTasks.length; i++) {
+    // pass each task object into the `createTaskEl()` function
+    createTaskEl(savedTasks[i]);
+  }
+  }
 
 pageContentEl.addEventListener("click", taskButtonHandler);
 formEl.addEventListener("submit", taskFormHandler);
@@ -285,3 +280,4 @@ pageContentEl.addEventListener("dragstart", dragTaskHandler);
 pageContentEl.addEventListener("dragover", dropZoneDragHandler);
 pageContentEl.addEventListener("drop", dropTaskHandler);
 pageContentEl.addEventListener("dragleave", dragLeaveHandler);
+loadTasks();
